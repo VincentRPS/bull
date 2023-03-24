@@ -50,7 +50,36 @@ class Inflation:
 
 
 class Shard:
-    """Low-level implementation of a single Discord shard."""
+    """
+    Low-level implementation of a single Discord shard.
+
+    Parameters
+    ----------
+    token: :class:`str`
+        The bot token for this shard.
+    session: :class:`aiohttp.ClientSession`
+        The ClientSession to use for websocket connections.
+    intents: :class:`int`
+        Discord privileged intents value.
+    dispatcher: :class:`bls_utils.Dispatch`
+        Global dispatcher this shard should use.
+    large_threshold: :class:`int`
+        The Guild large threshold. Defaults to 250.
+    library: :class:`str`
+        The library to mark the Shard from. Defaults to `clyde`.
+    proxy_url: :class:`str`
+        The proxy to use for connections. Defaults to None.
+    proxy_auth: :class:`aiohttp.BasicAuth`
+        The authentication to use for proxies. Defaults to None.
+    shard_id: :class:`int`
+        The id of this shard. Defaults to 0.
+    shard_count: :class:`int`
+        Amount of other shards running. Defaults to 0.
+    base_url: :class:`str`
+        The Gateway URL to use for this shard. Defaults to `wss://gateway.discord.gg`.
+    version: :class:`int`
+        The Discord API version to use. Defaults to 10.
+    """
 
     ZLIB_SUFFIX = b'\x00\x00\xff\xff'
     FMT_URL = '{base}/?v={version}&encoding=json&compress=zlib-stream'
@@ -103,6 +132,14 @@ class Shard:
 
 
     async def connect(self, reconnect: bool = False) -> None:
+        """
+        Create a new connection, or reconnect, to the Discord Gateway.
+
+        Parameters
+        ----------
+        reconnect: :class:`bool`
+            Whether this should reconnect or connect. Defaults to False.
+        """
         if self._ws:
             raise ShardError('WebSocket already exists')
 
@@ -218,6 +255,14 @@ class Shard:
 
 
     async def send(self, data: dict[str, Any]) -> None:
+        """
+        Send a message to this Shard's websocket.
+
+        Parameters
+        ----------
+        data: :class:`dict`[:class:`str`, :class:`Any`]
+            The data to send to Discord.
+        """
         if self._ws is None:
             raise ShardError('WebSocket must exist to send to it')
 
@@ -226,6 +271,7 @@ class Shard:
 
 
     async def identify(self) -> None:
+        """Identify to the Discord Gateway."""
         await self.send({
             'op': 2,
             'd': {
@@ -244,6 +290,7 @@ class Shard:
 
 
     async def resume(self) -> None:
+        """Resume a previously closed connection."""
         await self.send({
             'op': 6,
             'd': {
@@ -293,6 +340,14 @@ class Shard:
 
 
     async def handle_close(self, code: int | None = None) -> None:
+        """
+        Handle a close code sent by Discord, or rather an error.
+
+        Parameters
+        ----------
+        code: :class:`int` | None
+            The code to handle. Defaults to None.
+        """
         if self.__hb_task and not self.__hb_task.done():
             self.__hb_task.cancel()
 
