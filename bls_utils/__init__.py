@@ -2,7 +2,7 @@
 bls_utils
 ~~~~~~~~~
 
-**B**ul**l** **s**hared **utils8.
+**B**ul**l** **s**hared **utils.
 
 Utilities shared across the Bull ecosystem.
 
