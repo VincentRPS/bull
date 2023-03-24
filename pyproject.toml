@@ -1,0 +1,148 @@
+[tool.mypy]
+strict = true
+check_untyped_defs = false
+incremental = true
+namespace_packages = true
+no_implicit_optional = true
+pretty = true
+python_version = 3.11
+show_column_numbers = true
+show_error_codes = true
+show_error_context = true
+
+# allowed
+allow_untyped_globals = false
+allow_redefinition = true
+
+# disallowed
+disallow_untyped_decorators = true
+disallow_incomplete_defs = true
+disallow_untyped_defs = true
+
+# warnings
+warn_redundant_casts = true
+warn_return_any = true
+warn_unreachable = true
+warn_unused_configs = true
+warn_unused_ignores = true
+
+[tool.ruff]
+# Enable pycodestyle (`E`) and Pyflakes (`F`) codes by default.
+select = [
+    "E",
+    "F",
+    "W",
+    "I",
+    "D",
+    "UP",
+    "YTT",
+    "ANN",
+    "S",
+    "BLE",
+    "FBT",
+    "B",
+    "C4",
+    "DTZ",
+    "T10",
+    "EM",
+    "ISC",
+    "G",
+    "PIE",
+    "T20",
+    "Q",
+    "RSE",
+    "RET",
+    "SIM",
+    "TCH",
+    "ARG",
+    "PGH",
+    "PLC",
+    "PLE",
+    "PLR",
+    "PLW",
+    "TRY",
+    "RUF",
+]
+
+fixable = ["E501"]
+
+# F403, F405 do not need to hate wildcard imports. MyPy can find undefined errors.
+# D107, class docstr is in the class level
+# D203 and D211, D212 and D213 intentionally clash
+# ANN101, ANN102 ask for `self` and `cls` annotations
+# RET505-RET508 does not allow for any branches where it is an elif and else after a return
+# D212 breaks license headers
+# D400, D415 "First line should end with a period," why?
+# SIM115 Use context handler for opening files, not ideal
+# D205, D105, D102 and D101 are not needed for docstrings.
+# PLE0605 Invalid format for __all__, must be tuple or list
+# FBT001 & FBT002 are useless boolean things
+ignore = [
+    "F403",
+    "F405",
+    "D107",
+    "D203",
+    "D213",
+    "ANN101",
+    "ANN102",
+    "RET505",
+    "RET506",
+    "RET507",
+    "RET508",
+    "D212",
+    "D400",
+    "D415",
+    "SIM115",
+    "D205",
+    "D105",
+    "D101",
+    "D102",
+    "PLE0605",
+    "FBT001",
+    "FBT002",
+    "ANN401",
+    "TRY003",
+    "EM101",
+    "RUF006",
+    "PLR0912",
+    "PLR2004",
+    "EM102"
+]
+
+# Exclude a variety of commonly ignored directories.
+exclude = [
+    ".bzr",
+    ".direnv",
+    ".eggs",
+    ".git",
+    ".hg",
+    ".mypy_cache",
+    ".nox",
+    ".pants.d",
+    ".pytype",
+    ".ruff_cache",
+    ".svn",
+    ".tox",
+    ".venv",
+    "__pypackages__",
+    "_build",
+    "buck-out",
+    "build",
+    "dist",
+    "node_modules",
+    "venv",
+]
+
+# Same as Black.
+line-length = 88
+
+# Allow unused variables when underscore-prefixed.
+dummy-variable-rgx = "^(_+|(_+[a-zA-Z0-9_]*[a-zA-Z0-9]+?))$"
+
+# Assume Python 3.10.
+target-version = "py310"
+
+[tool.ruff.flake8-quotes]
+docstring-quotes = "double"
+inline-quotes = "single"
+multiline-quotes = "double"
