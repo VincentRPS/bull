@@ -25,7 +25,6 @@ SOFTWARE.
 
 import asyncio
 import logging
-import time
 import zlib
 from platform import system
 from random import random
@@ -37,6 +36,8 @@ import msgspec
 from bls_utils.dispatch import Dispatch
 from bls_utils.exceptions import ShardError
 
+from .shard_rate_limiter import RateLimiter
+
 _log = logging.getLogger(__name__)
 
 
@@ -46,51 +47,6 @@ class Inflation:
 
     def reset(self) -> None:
         self.inflator = zlib.decompressobj()
-
-
-class RateLimiter:
-    def __init__(self, concurrency: int, per: float | int) -> None:
-        self.concurrency: int = concurrency
-        self.per: float | int = per
-
-        self.current: int = self.concurrency
-        self._reserved: list[asyncio.Future[None]] = []
-        self.loop: asyncio.AbstractEventLoop = asyncio.get_running_loop()
-        self.pending_reset: bool = False
-
-    async def __aenter__(self) -> 'RateLimiter':
-        while self.current == 0:
-            future = self.loop.create_future()
-            self._reserved.append(future)
-            await future
-
-        self.current -= 1
-
-        if not self.pending_reset:
-            self.pending_reset = True
-            self.loop.call_later(self.per, self.reset)
-
-        return self
-
-    async def __aexit__(self, *_: Any) -> None:
-        ...
-
-    def reset(self) -> None:
-        current_time = time.time()
-        self.reset_at = current_time + self.per
-        self.current = self.concurrency
-
-        for _ in range(self.concurrency):
-            try:
-                self._reserved.pop().set_result(None)
-            except IndexError:
-                break
-
-        if len(self._reserved):
-            self.pending_reset = True
-            self.loop.call_later(self.per, self.reset)
-        else:
-            self.pending_reset = False
 
 
 class Shard:
