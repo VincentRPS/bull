@@ -353,7 +353,7 @@ class Shard:
 
         if code is None: # noqa: SIM114
             await self.connect(reconnect=True)
-        elif code is self.RESUMABLE: # type: ignore[comparison-overlap]
+        elif code in self.RESUMABLE:
             await self.connect(reconnect=True)
         elif code > 4000 or code == 4000:
             await self.connect()
